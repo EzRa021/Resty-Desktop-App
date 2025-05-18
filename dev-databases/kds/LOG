@@ -1,0 +1,14 @@
+2025/05/17-11:22:24.114 30fc Recovering log #155
+2025/05/17-11:22:24.114 30fc Level-0 table #157: started
+2025/05/17-11:22:24.136 30fc Level-0 table #157: 237 bytes OK
+2025/05/17-11:22:24.166 30fc Delete type=0 #155
+2025/05/17-11:22:24.166 30fc Delete type=3 #153
+2025/05/17-11:22:24.166 3da4 Compacting 4@0 + 1@1 files
+2025/05/17-11:22:24.182 3da4 Generated table #159@0: 7 keys, 906 bytes
+2025/05/17-11:22:24.182 3da4 Compacted 4@0 + 1@1 files => 906 bytes
+2025/05/17-11:22:24.191 3da4 compacted to: files[ 0 1 0 0 0 0 0 ]
+2025/05/17-11:22:24.191 3da4 Delete type=2 #146
+2025/05/17-11:22:24.191 3da4 Delete type=2 #148
+2025/05/17-11:22:24.191 3da4 Delete type=2 #151
+2025/05/17-11:22:24.191 3da4 Delete type=2 #154
+2025/05/17-11:22:24.191 3da4 Delete type=2 #157

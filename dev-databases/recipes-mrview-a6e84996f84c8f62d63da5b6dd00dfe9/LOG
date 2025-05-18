@@ -1,0 +1,5 @@
+2025/05/17-11:22:24.898 30fc Recovering log #232
+2025/05/17-11:22:24.898 30fc Level-0 table #234: started
+2025/05/17-11:22:24.922 30fc Level-0 table #234: 237 bytes OK
+2025/05/17-11:22:24.966 30fc Delete type=0 #232
+2025/05/17-11:22:24.966 30fc Delete type=3 #230

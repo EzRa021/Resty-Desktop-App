@@ -1,0 +1,6212 @@
+# Test Data for Resty Application
+
+## Socket.IO Events
+
+### 1. Authentication Events
+
+#### Login Request
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+#### Login Response (Success)
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+#### Logout Request
+```json
+{
+  "event": "auth:logout",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1"
+  }
+}
+```
+
+### 2. User Management Events
+
+#### Create User
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+#### Update User
+```json
+{
+  "event": "user:update",
+  "data": {
+    "id": "user_123",
+    "email": "updated@resty.com",
+    "name": "Updated Name",
+    "phone": "+1234567892",
+    "role": "manager"
+  }
+}
+```
+
+#### Delete User
+```json
+{
+  "event": "user:delete",
+  "data": {
+    "id": "user_123"
+  }
+}
+```
+
+#### Get All Users
+```json
+{
+  "event": "user:getAll"
+}
+```
+
+#### Get Users by Branch
+```json
+{
+  "event": "user:getByBranch",
+  "data": {
+    "branchId": "branch_123"
+  }
+}
+```
+
+#### Get Users by Role
+```json
+{
+  "event": "user:getByRole",
+  "data": {
+    "role": "waiter"
+  }
+}
+```
+
+#### Get Current User
+```json
+{
+  "event": "user:getCurrent",
+  "data": {
+    "sessionId": "session_123"
+  }
+}
+```
+
+### 3. Test Events
+
+#### Create Test User
+```json
+{
+  "event": "test:createUser",
+  "data": {
+    "email": "test_user@resty.com",
+    "password": "Test@123",
+    "name": "Test User",
+    "role": "waiter"
+  }
+}
+```
+
+#### Check Database Connection
+```json
+{
+  "event": "test:checkConnection"
+}
+```
+
+#### Create Test Session
+```json
+{
+  "event": "test:createSession",
+  "data": {
+    "userId": "user_123"
+  }
+}
+```
+
+#### Log Test Activity
+```json
+{
+  "event": "test:logActivity",
+  "data": {
+    "userId": "user_123",
+    "type": "login",
+    "details": {
+      "ip": "127.0.0.1",
+      "browser": "Chrome"
+    }
+  }
+}
+```
+
+#### Cleanup Test Data
+```json
+{
+  "event": "test:cleanup"
+}
+```
+
+## HTTP Endpoints
+
+### 1. Authentication Endpoints
+
+#### Login
+```bash
+POST /api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@resty.com",
+  "password": "Admin@123"
+}
+```
+
+#### Logout
+```bash
+POST /api/auth/logout
+Content-Type: application/json
+
+{
+  "sessionId": "session_123"
+}
+```
+
+### 2. Test Endpoints
+
+#### Check Database Connection
+```bash
+GET /api/test/connection
+```
+
+#### Create Test User
+```bash
+POST /api/test/user
+Content-Type: application/json
+
+{
+  "email": "test_user@resty.com",
+  "password": "Test@123",
+  "name": "Test User",
+  "role": "waiter"
+}
+```
+
+#### Cleanup Test Data
+```bash
+DELETE /api/test/cleanup
+```
+
+## Sample Test Data Sets
+
+### 1. Admin User
+```json
+{
+  "email": "admin@resty.com",
+  "password": "Admin@123",
+  "name": "Admin User",
+  "role": "admin",
+  "phone": "+1234567890",
+  "restaurantId": "rest_123",
+  "branchId": "branch_123"
+}
+```
+
+### 2. Manager User
+```json
+{
+  "email": "manager@resty.com",
+  "password": "Manager@123",
+  "name": "Manager User",
+  "role": "manager",
+  "phone": "+1234567891",
+  "restaurantId": "rest_123",
+  "branchId": "branch_123"
+}
+```
+
+### 3. Waiter User
+```json
+{
+  "email": "waiter@resty.com",
+  "password": "Waiter@123",
+  "name": "Waiter User",
+  "role": "waiter",
+  "phone": "+1234567892",
+  "restaurantId": "rest_123",
+  "branchId": "branch_123"
+}
+```
+
+### 4. Test Session
+```json
+{
+  "userId": "user_123",
+  "deviceInfo": {
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0",
+    "deviceId": "socket_123"
+  }
+}
+```
+
+### 5. Test Activity
+```json
+{
+  "userId": "user_123",
+  "type": "login",
+  "details": {
+    "ip": "127.0.0.1",
+    "browser": "Chrome",
+    "timestamp": "2024-03-20T10:00:00Z"
+  }
+}
+```
+
+## Expected Response Formats
+
+### Success Response
+```json
+{
+  "success": true,
+  "message": "Operation successful",
+  "data": {
+    // Response data here
+  }
+}
+```
+
+### Error Response
+```json
+{
+  "success": false,
+  "message": "Operation failed",
+  "error": "Error details here"
+}
+```
+
+## Testing Tips
+
+1. Always start with the database connection test
+2. Create test users with different roles
+3. Test session creation and management
+4. Verify activity logging
+5. Clean up test data after testing
+6. Check error handling with invalid data
+7. Verify response formats
+8. Test rate limiting and security features
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "email": "waiter@resty.com",
+    "password": "Waiter@123",
+    "name": "John Waiter",
+    "role": "waiter",
+    "phone": "+1234567890",
+    "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+    "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8",
+    "restaurantName": "Test Restaurant",
+    "branchName": "Main Branch",
+    "branchPhone": "+2347082209428",
+    "branchLocation": "123 Test St"
+  }
+}
+```
+
+### 2. Session Management
+- Always login first to get a valid session with user details
+- Verify the session response contains both sessionId and user details
+- Include the sessionId in all authenticated requests
+- Session expires after 24 hours
+- New session required after expiration
+- Logout invalidates the session
+
+### 3. Error Handling
+- Invalid session: "Invalid or expired session"
+- Missing session: "Session ID is required"
+- User not found in session: "User not found in session"
+- Expired session: "Session expired"
+
+### 4. Common Session Issues
+1. Missing user details in session
+2. Expired session
+3. Invalid session ID
+4. Session not properly created during login
+5. Session data not properly stored
+
+### 5. Debugging Session Issues
+1. Check login response for complete session data
+2. Verify session ID is being passed correctly
+3. Ensure session contains user details
+4. Check session expiration time
+5. Verify session storage in database
+
+## Common Test Scenarios
+
+1. User Registration and Login
+2. Role-based Access Control
+3. Session Management
+4. Activity Logging
+5. Data Validation
+6. Error Handling
+7. Security Features
+8. Database Operations
+9. Cleanup Operations
+
+## Testing Flow
+
+### 1. Authentication Flow
+1. First, login to get a session ID and user details:
+```json
+{
+  "event": "auth:login",
+  "data": {
+    "email": "admin@resty.com",
+    "password": "Admin@123"
+  }
+}
+```
+
+2. Verify the login response contains both sessionId and user details:
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "sessionId": "session_69caabf4-aee2-4afa-a58b-c7d368f697d1",
+    "user": {
+      "_id": "user_123",
+      "email": "admin@resty.com",
+      "name": "Admin User",
+      "role": "admin",
+      "restaurantId": "restaurant_a987abd5-a7af-40bc-821e-f7749d286bc4",
+      "branchId": "branch_86d0b0ab-19b1-446e-b3a6-9c3612007cb8"
+    }
+  }
+}
+```
+
+3. Use the session ID for subsequent requests:
+```json
+{
+  "event": "user:create",
+  "data": {
+    "
