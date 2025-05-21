@@ -33,9 +33,32 @@ const createWindow = async () => {
         contextIsolation: true,
         preload: path.join(__dirname, 'preload.js'),
         webSecurity: true,
-        sandbox: false
+        sandbox: false,
+        // Add additional stability options
+        backgroundThrottling: false,
+        enableRemoteModule: false,
+        spellcheck: false
       },
       show: false,
+      // Add additional window options
+      backgroundColor: '#ffffff',
+      titleBarStyle: 'default',
+      frame: true,
+      minWidth: 800,
+      minHeight: 600
+    });
+
+    // Handle window state
+    mainWindow.on('closed', () => {
+      mainWindow = null;
+    });
+
+    // Handle window errors
+    mainWindow.webContents.on('crashed', (event, killed) => {
+      console.error('Window crashed:', killed ? 'killed' : 'crashed');
+      if (!killed) {
+        mainWindow.reload();
+      }
     });
 
     if (process.env.ELECTRON_DEV) {
@@ -85,6 +108,15 @@ const createWindow = async () => {
       }
     }
 
+    // Wait for window to be ready before showing
+    mainWindow.once('ready-to-show', () => {
+      mainWindow.show();
+      if (isDev) {
+        console.log('Opening DevTools in development mode');
+        mainWindow.webContents.openDevTools({ mode: 'detach' });
+      }
+    });
+
     mainWindow.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
       console.error(`Failed to load window: ${errorDescription} (${errorCode})`);
       mainWindow.loadURL(`data:text/html;charset=utf-8,
@@ -106,11 +138,6 @@ const createWindow = async () => {
       console.log('Window content loaded successfully');
       mainWindow.show();
     });
-
-    if (isDev) {
-      console.log('Opening DevTools in development mode');
-      mainWindow.webContents.openDevTools();
-    }
   } catch (error) {
     console.error('Error creating window:', error);
     try {

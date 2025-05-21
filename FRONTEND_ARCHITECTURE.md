@@ -1,420 +1,294 @@
-# Resty Frontend Architecture
+# Frontend Architecture Documentation
 
-## Global State Management (Zustand)
-```plaintext
-Main Stores:
-1. authStore: 
-   - User authentication
-   - Session management
-   - Permissions control
-   - Security monitoring
-   - Device management
-   
-2. securityStore:
-   - Session tracking
-   - Activity monitoring
-   - Security alerts
-   - Audit logs
-   
-3. uiStore: 
-   - Theme management
-   - Sidebar state
-   - Notifications
-   - Security prompts
-   
-4. posStore: 
-   - Order management
-   - Cart handling
-   - Payment processing
-   - Transaction security
-   
-5. inventoryStore: 
-   - Stock management
-   - Inventory tracking
-   - Supplier integration
-   - Stock alerts
-   
-6. analyticsStore: 
-   - Business metrics
-   - Security analytics
-   - Performance tracking
-   - Predictive analysis
-```
+## Overview
+The frontend of the restaurant management system is built using Next.js and follows a modular, component-based architecture. It's designed to be scalable, maintainable, and user-friendly.
 
-## Security Features Implementation
 
-### 1. Authentication Flow
-#### Components and Hooks
-- `useAuth` hook: Central authentication management
-  - `login(email, password)`: Handles login with security checks
-  - `logout()`: Manages secure session termination
-  - `checkSession()`: Validates current session status
-  - `refreshSession()`: Handles token refresh
-  - `getSecurityStatus()`: Retrieves account security status
+## Core Components
 
-#### Security Features
-- Multi-factor authentication UI
-  - SMS/Email code verification
-  - Authentication app integration 
-  - Security questions validation
-- Password management
-  - Strength meter with requirements
-  - Password history tracking
-  - Expiration notifications
-- Device security
-  - Device fingerprinting
-  - Location verification
-  - Trusted device management
-- Account protection
-  - Rate limiting warnings
-  - Account lockout handling
-  - Suspicious activity alerts
+### 1. Layout Components
+- `Layout.js`: Main application layout with navigation and sidebar
+- `Sidebar.js`: Navigation sidebar with role-based menu items
+- `Header.js`: Top header with user info and quick actions
+- `Footer.js`: Application footer with version and copyright
+- `BranchSelector.js`: Branch switching component
+- `LoadingOverlay.js`: Global loading state
+- `ErrorBoundary.js`: Global error handling
 
-### 2. Session Management
-#### Active Session Features
-- Real-time session monitoring
-  - Device information tracking
-  - IP address monitoring
-  - Activity timestamps
-  - Geographic location logging
-- Session security controls
-  - Automatic timeout handling
-  - Forced logout capabilities
-  - Concurrent session limits
-  - Session recovery process
-- Security notifications
-  - Timeout warnings
-  - New device alerts
-  - Location change notices
-  - Suspicious activity warnings
+### 2. Authentication Components
+- `Login.js`: User login form
+- `Register.js`: New user registration
+- `ForgotPassword.js`: Password recovery
+- `ResetPassword.js`: Password reset form
+- `SessionManager.js`: Session handling and token management
+- `RegistrationProgress.js`: Multi-step registration progress
+- `RestaurantForm.js`: Restaurant information form
+- `BranchForm.js`: Branch information form
+- `UserForm.js`: User setup form
 
-### 3. Security Monitoring
-- Real-time security alerts
-- Activity log viewer
-- Threat detection
-- Security dashboard
-- Audit trail viewer
+### 3. Branch Management
+- `Branches.js`: Branch management interface
+- `BranchForm.js`: Branch creation/editing
+- `BranchSettings.js`: Branch-specific settings
+- `BranchAnalytics.js`: Branch performance metrics
+- `BranchInventory.js`: Branch inventory management
+- `BranchStaff.js`: Branch staff management
+- `BranchSchedule.js`: Branch operating hours
 
-### 4. User Security Settings
-- Security preferences
-- Device management
-- Login history
-- Activity monitoring
-- Password management
+### 4. POS (Point of Sale) Components
+- `POS.js`: Main POS interface
+- `OrderList.js`: List of active orders
+- `OrderForm.js`: Order creation and modification
+- `PaymentModal.js`: Payment processing
+- `ReceiptPreview.js`: Receipt generation and preview
+- `TableLayout.js`: Restaurant table management
+- `SplitBill.js`: Bill splitting functionality
+- `DiscountManager.js`: Discount application
+- `TaxCalculator.js`: Tax calculation
 
-### 4. Security Error Handling and States
+### 5. Kitchen Display System (KDS)
+- `KDS.js`: Kitchen display interface
+- `OrderQueue.js`: Order queue management
+- `OrderTimer.js`: Order preparation timing
+- `KitchenStatus.js`: Kitchen status indicators
+- `OrderDetails.js`: Detailed order information
+- `PrepStation.js`: Preparation station view
+- `OrderNotes.js`: Special order instructions
 
-#### Error States
-- Authentication Errors
-  - Invalid credentials
-  - Account locked
-  - Password expired
-  - MFA required
-  - Suspicious activity detected
-  
-#### Security State Management
-- Account Status States
-  ```plaintext
-  - ACTIVE: Normal account operation
-  - LOCKED: Temporarily locked due to security
-  - SUSPENDED: Administratively suspended
-  - RESTRICTED: Limited access mode
-  - RECOVERY: Account recovery process
-  ```
+### 6. Inventory Management
+- `Inventory.js`: Main inventory interface
+- `StockList.js`: Stock level display
+- `StockForm.js`: Stock update form
+- `LowStockAlert.js`: Low stock notifications
+- `InventoryReport.js`: Inventory reports and analytics
+- `SupplierManager.js`: Supplier management
+- `PurchaseOrders.js`: Purchase order management
+- `StockTransfer.js`: Inter-branch stock transfer
 
-#### Security Response Flows
-1. Rate Limit Exceeded
-   - Show remaining time
-   - Provide alternative options
-   - Display security recommendations
+### 7. Menu Management
+- `Menu.js`: Menu management interface
+- `MenuItemForm.js`: Menu item creation/editing
+- `CategoryManager.js`: Menu category management
+- `PriceManager.js`: Price management
+- `SpecialManager.js`: Special offers and promotions
+- `RecipeManager.js`: Recipe management
+- `NutritionalInfo.js`: Nutritional information
+- `AllergenManager.js`: Allergen information
 
-2. Account Lock
-   - Show lock duration
-   - Display reason
-   - Provide recovery options
-   - Show support contact
+### 8. User Management
+- `Users.js`: User management interface
+- `UserForm.js`: User creation/editing
+- `RoleManager.js`: Role and permission management
+- `UserProfile.js`: User profile management
+- `AttendanceTracker.js`: Staff attendance
+- `ShiftManager.js`: Shift scheduling
 
-3. Suspicious Activity
-   - Location verification
-   - Device confirmation
-   - Additional authentication
-   - Security review process
+### 9. Settings Components
+- `Settings.js`: Main settings interface
+- `UserSettings.js`: User-specific settings
+- `RoleSettings.js`: Role-based settings
+- `SystemSettings.js`: System-wide settings
+- `ReceiptSettings.js`: Receipt customization
+- `NotificationSettings.js`: Notification preferences
+- `PrinterSettings.js`: Printer configuration
+- `TaxSettings.js`: Tax configuration
 
-4. Session Expiry
-   - Grace period warning
-   - Auto-refresh attempt
-   - Manual verification option
-   - Clean session cleanup
+### 10. Analytics and Reporting
+- `Dashboard.js`: Main analytics dashboard
+- `SalesReport.js`: Sales analytics
+- `InventoryReport.js`: Inventory analytics
+- `StaffReport.js`: Staff performance metrics
+- `CustomerReport.js`: Customer analytics
+- `FinancialReport.js`: Financial statements
+- `TrendAnalysis.js`: Sales trends
 
-### 5. Security UI Components
+## State Management
 
-#### Alert Components
-- SecurityAlert
-  - Severity levels
-  - Action buttons
-  - Countdown timers
-  - Status indicators
+### 1. Context Providers
+- `AuthContext.js`: Authentication state
+- `SettingsContext.js`: Application settings
+- `ThemeContext.js`: UI theme management
+- `NotificationContext.js`: Notification system
+- `BranchContext.js`: Active branch management
+- `SocketContext.js`: WebSocket connection
+- `CartContext.js`: POS cart management
+- `OrderContext.js`: Order management
 
-#### Form Security
-- PasswordStrengthMeter
-  - Real-time validation
-  - Requirement checklist
-  - History verification
-  - Common password check
+### 2. Custom Hooks
+- `useAuth.js`: Authentication utilities
+- `useSettings.js`: Settings management
+- `useSocket.js`: WebSocket connection
+- `useNotifications.js`: Notification handling
+- `useLocalStorage.js`: Local storage utilities
+- `useBranch.js`: Branch management
+- `useCart.js`: Cart management
+- `useOrders.js`: Order management
 
-#### Security Dashboards
-- UserSecurityDashboard
-  - Active sessions
-  - Recent activities
-  - Security settings
-  - Alert preferences
+## Socket Communication
 
-#### Verification Forms
-- MFAVerificationForm
-  - Multiple method support
-  - Backup codes
-  - Remember device option
-  - Timeout handling
+### 1. Socket Events
+- Real-time order updates
+- Inventory changes
+- Kitchen status updates
+- User notifications
+- System alerts
+- Branch synchronization
+- Stock updates
+- Payment processing
 
-## Module Architecture
+### 2. Event Handlers
+- Order management
+- Inventory updates
+- Kitchen display updates
+- User notifications
+- System status updates
+- Branch synchronization
+- Stock management
+- Payment processing
 
-### ES Module Implementation
-```plaintext
-1. File Structure:
-   - All server files use .js extension
-   - All files use ES module syntax (import/export)
-   - Package.json type: "module"
-   
-2. Import Patterns:
-   - Named imports: import { functionName } from './module.js'
-   - Default imports: import DefaultExport from './module.js'
-   - Side effect imports: import './module.js'
-   
-3. Export Patterns:
-   - Named exports: export const/function
-   - Default exports: export default
-   - Re-exports: export { name } from './other.js'
-   
-4. Path Resolution:
-   - Explicit .js extensions in imports
-   - URL-based imports for package modules
-   - File URL handling for __dirname equivalent
-```
+## Styling and Theming
 
-### Security Implementation in ES Modules
-```plaintext
-1. Module Encapsulation:
-   - Private variables using closures
-   - Controlled exports for security
-   - Immutable exports when possible
-   
-2. Validation Modules:
-   - Centralized validation
-   - Type checking
-   - Input sanitization
-   
-3. Security Patterns:
-   - Principle of least privilege
-   - Secure default exports
-   - Controlled module access
-```
+### 1. Theme System
+- Light/Dark mode support
+- Custom color schemes
+- Responsive design
+- Accessibility features
+- Brand customization
+- Print styles
+- Mobile optimization
 
-## Page Structure and Features
-
-### 1. Authentication Pages (/auth)
-- /auth/login
-  - Login form with email/password
-  - Role-based redirect after login
-  - Session management integration
-- /auth/register
-  - Multi-step registration for new restaurants
-  - Business information collection
-  - Initial setup wizard
-
-### 2. Dashboard (/dashboard)
-- Main overview page with real-time stats
-- Socket.IO integration for live updates
-- Components:
-  * Daily sales summary
-  * Active orders counter
-  * Low stock alerts
-  * Staff currently on shift
-  * Recent notifications panel
-  * Quick action buttons
-
-### 3. POS System (/pos)
-- /pos
-  - Split view layout
-  - Left: Menu categories and items
-  - Right: Current order builder
-  - Bottom: Action buttons (pay, hold, cancel)
-  - Real-time stock checking
-- /pos/payment
-  - Payment method selection
-  - Split payment handling
-  - Receipt preview
-  - Customer information collection
-- /pos/orders
-  - List of active and recent orders
-  - Order status tracking
-  - Order modification capabilities
-  - Search and filter options
-
-### 4. Kitchen Display System (/kds)
-- Real-time order queue display
-- Color-coded order status
-- Drag-and-drop order priority management
-- Preparation time tracking
-- Order completion marking
-- Split screen for different stations
-
-### 5. Inventory Management (/inventory)
-- /inventory
-  - Stock level dashboard
-  - Low stock warnings
-  - Quick add/remove stock
-  - Search and filter options
-- /inventory/items
-  - Detailed item management
-  - Cost tracking
-  - Supplier information
-  - Usage history
-- /inventory/transactions
-  - Stock movement history
-  - Wastage tracking
-  - Audit trail
-- /inventory/suppliers
-  - Supplier database
-  - Order history
-  - Contact information
-  - Performance metrics
-
-### 6. Menu Management (/menu)
-- /menu/items
-  - Item list with images
-  - Category organization
-  - Price management
-  - Availability toggling
-- /menu/categories
-  - Category hierarchy
-  - Category sorting
-  - Visibility settings
-- /menu/modifiers
-  - Modifier group management
-  - Option configurations
-  - Price adjustments
-
-### 7. Analytics (/analytics)
-- /analytics/sales
-  - Revenue graphs
-  - Sales by category
-  - Peak hours visualization
-  - Export capabilities
-- /analytics/inventory
-  - Stock turnover rates
-  - Wastage reports
-  - Cost analysis
-  - Trend predictions
-- /analytics/performance
-  - Staff performance metrics
-  - Service speed tracking
-  - Customer satisfaction scores
-
-### 8. Staff Management (/staff)
-- /staff/roster
-  - Schedule management
-  - Shift tracking
-  - Break management
-- /staff/performance
-  - Sales performance
-  - Order accuracy
-  - Customer feedback
-- /staff/training
-  - Training modules
-  - Certification tracking
-  - Knowledge base
-
-### 9. Customer Management (/customers)
-- /customers
-  - Customer database
-  - Order history
-  - Preferences tracking
-- /customers/loyalty
-  - Points system
-  - Rewards management
-  - Member tiers
-- /customers/feedback
-  - Review management
-  - Response handling
-  - Satisfaction tracking
-
-### 10. Settings (/settings)
-- /settings/profile
-  - Restaurant information
-  - Business hours
-  - Contact details
-- /settings/preferences
-  - System preferences
-  - Notification settings
-  - Print settings
-- /settings/users
-  - User management
-  - Role assignments
-  - Permission settings
-
-## Shared Components
-1. NotificationCenter
-   - Real-time alerts
-   - Desktop notifications
-   - Message center
-
-2. GlobalSearch
-   - Quick access to any feature
-   - Recent items
-   - Keyboard shortcuts
-
-3. ActionBar
-   - Context-aware actions
-   - Quick filters
-   - Bulk operations
-
-4. DataGrid
-   - Sortable columns
-   - Bulk actions
-   - Export functionality
-
-5. FilterPanel
-   - Advanced search
-   - Date ranges
-   - Custom filters
-
-## Mobile Responsiveness
-- All pages adapt to mobile views
-- Touch-friendly interfaces
-- Simplified mobile layouts
-- PWA capabilities
-
-## Performance Optimizations
-- Code splitting by route
-- Image optimization
-- Lazy loading of components
-- Data caching strategies
-- Socket.IO connection management
+### 2. Component Styling
+- CSS Modules
+- Styled Components
+- Global styles
+- Responsive utilities
+- Animation system
+- Print stylesheets
+- Mobile-first design
 
 ## Error Handling
-- Global error boundary
-- Offline capability
-- Retry mechanisms
-- User-friendly error messages
+
+### 1. Error Boundaries
+- Global error handling
+- Component-level error boundaries
+- Error logging and reporting
+- Offline error handling
+- Network error recovery
+- Form validation errors
+- API error handling
+
+### 2. Form Validation
+- Input validation
+- Error messages
+- Form submission handling
+- Real-time validation
+- Cross-field validation
+- Custom validation rules
+- Error recovery
+
+## Performance Optimization
+
+### 1. Code Splitting
+- Dynamic imports
+- Route-based splitting
+- Component lazy loading
+- Image optimization
+- Font loading
+- Bundle analysis
+
+### 2. Caching
+- API response caching
+- Local storage caching
+- Service worker caching
+- Image caching
+- Route caching
+- State persistence
 
 ## Security Features
-- Role-based access control
-- API request validation
-- Session management
-- Data encryption
 
-## Accessibility
-- ARIA labels
-- Keyboard navigation
-- High contrast mode
-- Screen reader support
+### 1. Authentication
+- JWT token management
+- Session handling
+- Role-based access control
+- Password policies
+- Session timeout
+- Login attempt limiting
+
+### 2. Data Protection
+- Input sanitization
+- XSS prevention
+- CSRF protection
+- Data encryption
+- Secure storage
+- API security
+
+## Testing Strategy
+
+### 1. Unit Tests
+- Component testing
+- Hook testing
+- Utility function testing
+- State management testing
+- Form validation testing
+- API integration testing
+
+### 2. Integration Tests
+- Page testing
+- API integration testing
+- Socket communication testing
+- User flow testing
+- Cross-browser testing
+- Mobile testing
+
+## Build and Deployment
+
+### 1. Build Process
+- Next.js build optimization
+- Asset optimization
+- Environment configuration
+- Code splitting
+- Bundle analysis
+- Error tracking
+
+### 2. Deployment
+- Production deployment
+- Staging environment
+- Development environment
+- CI/CD pipeline
+- Automated testing
+- Version control
+
+## Documentation
+
+### 1. Component Documentation
+- Props documentation
+- Usage examples
+- Component API
+- State management
+- Event handling
+- Styling guide
+
+### 2. API Documentation
+- Endpoint documentation
+- Request/Response formats
+- Error handling
+- Authentication
+- WebSocket events
+- Data models
+
+## Future Considerations
+
+### 1. Planned Features
+- Offline support
+- Progressive Web App
+- Mobile app integration
+- Advanced reporting
+- Customer mobile app
+
+### 2. Performance Improvements
+- Code optimization
+- Bundle size reduction
+- Load time optimization
+- Caching strategies
+- Image optimization
+- API optimization

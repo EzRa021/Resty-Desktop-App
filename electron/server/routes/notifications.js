@@ -235,10 +235,10 @@ export const registerSocketEvents = (socket, { db: notificationsDB, usersDB, ses
           await notificationsDB.put(groupNotification);
         }));
       } else {
-        notification.read = true;
-        notification.readAt = new Date().toISOString();
+      notification.read = true;
+      notification.readAt = new Date().toISOString();
         notification.readBy = userId;
-        await notificationsDB.put(notification);
+      await notificationsDB.put(notification);
       }
       
       socket.emit('notifications:marked', { notificationId });

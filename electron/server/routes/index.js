@@ -100,6 +100,14 @@ export const registerSocketRoutes = async (io, databases) => {
         branchesDB
       });
 
+      // Branch routes
+      registerBranchSocketEvents(socket, {
+        db: branchesDB,
+        restaurantsDB,
+        sessionDB,
+        logsDB
+      });
+
       // Menu Item routes
       registerMenuItemSocketEvents(socket, {
         db: menuItemsDB,

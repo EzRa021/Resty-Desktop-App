@@ -17,9 +17,7 @@ const BASE_CONFIG = {
 };
 
 export const DB_CONFIG = {
-  path: isDev
-    ? path.join(__dirname, '../../dev-databases')
-    : path.join(app.getPath('userData'), 'databases'),
+  path: path.resolve(process.cwd(), 'dev-databases'),
   options: {
     auto_compaction: true,
     revs_limit: 1,
@@ -29,27 +27,40 @@ export const DB_CONFIG = {
   }
 };
 
+// Helper function to create CouchDB URL
+const createCouchDBUrl = (dbName) => 
+  `http://${BASE_CONFIG.COUCHDB_HOST}:${BASE_CONFIG.COUCHDB_PORT}/${dbName}`;
+
 export const COUCHDB_CONFIG = {
   urls: {
-    branches: `http://${BASE_CONFIG.COUCHDB_HOST}:${BASE_CONFIG.COUCHDB_PORT}/branches`,
-    users: `http://${BASE_CONFIG.COUCHDB_HOST}:${BASE_CONFIG.COUCHDB_PORT}/users`,
-    restaurants: `http://${BASE_CONFIG.COUCHDB_HOST}:${BASE_CONFIG.COUCHDB_PORT}/restaurants`,
-    logs: `http://${BASE_CONFIG.COUCHDB_HOST}:${BASE_CONFIG.COUCHDB_PORT}/logs`,
-    categories: `http://${BASE_CONFIG.COUCHDB_HOST}:${BASE_CONFIG.COUCHDB_PORT}/categories`,
-    subcategories: `http://${BASE_CONFIG.COUCHDB_HOST}:${BASE_CONFIG.COUCHDB_PORT}/subcategories`,
-    menuItems: `http://${BASE_CONFIG.COUCHDB_HOST}:${BASE_CONFIG.COUCHDB_PORT}/menu_items`,
-    ingredients: `http://${BASE_CONFIG.COUCHDB_HOST}:${BASE_CONFIG.COUCHDB_PORT}/ingredients`,
-    recipes: `http://${BASE_CONFIG.COUCHDB_HOST}:${BASE_CONFIG.COUCHDB_PORT}/recipes`,
-    pos: `http://${BASE_CONFIG.COUCHDB_HOST}:${BASE_CONFIG.COUCHDB_PORT}/pos`,
-    inventoryTransactions: `http://${BASE_CONFIG.COUCHDB_HOST}:${BASE_CONFIG.COUCHDB_PORT}/inventory_transactions`,
-    kds: `http://${BASE_CONFIG.COUCHDB_HOST}:${BASE_CONFIG.COUCHDB_PORT}/kds`,
-    suppliers: `http://${BASE_CONFIG.COUCHDB_HOST}:${BASE_CONFIG.COUCHDB_PORT}/suppliers`,
-    recipeVersions: `http://${BASE_CONFIG.COUCHDB_HOST}:${BASE_CONFIG.COUCHDB_PORT}/recipe_versions`,
-    tables: `http://${BASE_CONFIG.COUCHDB_HOST}:${BASE_CONFIG.COUCHDB_PORT}/tables`,
-    specials: `http://${BASE_CONFIG.COUCHDB_HOST}:${BASE_CONFIG.COUCHDB_PORT}/specials`,
-    wasteRecords: `http://${BASE_CONFIG.COUCHDB_HOST}:${BASE_CONFIG.COUCHDB_PORT}/waste_records`,
-    loyalty: `http://${BASE_CONFIG.COUCHDB_HOST}:${BASE_CONFIG.COUCHDB_PORT}/loyalty`,
-    settings: `http://${BASE_CONFIG.COUCHDB_HOST}:${BASE_CONFIG.COUCHDB_PORT}/settings`
+    // Core databases
+    users: createCouchDBUrl('users'),
+    restaurants: createCouchDBUrl('restaurants'),
+    branches: createCouchDBUrl('branches'),
+    logs: createCouchDBUrl('logs'),
+    sessions: createCouchDBUrl('sessions'),
+    notifications: createCouchDBUrl('notifications'),
+    
+    // Menu and Inventory
+    categories: createCouchDBUrl('categories'),
+    subcategories: createCouchDBUrl('subcategories'),
+    menuItems: createCouchDBUrl('menu_items'),
+    ingredients: createCouchDBUrl('ingredients'),
+    recipes: createCouchDBUrl('recipes'),
+    recipeVersions: createCouchDBUrl('recipe_versions'),
+    
+    // Operations
+    pos: createCouchDBUrl('pos'),
+    inventoryTransactions: createCouchDBUrl('inventory_transactions'),
+    kds: createCouchDBUrl('kds'),
+    tables: createCouchDBUrl('tables'),
+    specials: createCouchDBUrl('specials'),
+    wasteRecords: createCouchDBUrl('waste_records'),
+    
+    // Business
+    suppliers: createCouchDBUrl('suppliers'),
+    loyalty: createCouchDBUrl('loyalty'),
+    settings: createCouchDBUrl('settings')
   },
   auth: {
     username: BASE_CONFIG.COUCHDB_USER,

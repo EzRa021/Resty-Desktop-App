@@ -1,475 +1,294 @@
-# Frontend-Backend Integration Mapping
+# Frontend-Backend Mapping Documentation
 
-## 1. Authentication and Security (/auth)
-Backend Files:
-- `server/routes/users.js` (ES Module)
-- `server/routes/registration.js` (ES Module)
-- `server/utils/userEnhancedSecurity.js` (ES Module)
-- `server/utils/validateUser.js` (ES Module) - User validation and sanitization
-- `server/utils/sessionManager.js` (ES Module)
-- `server/utils/securityMonitor.js` (ES Module)
-- `server/utils/activityLogger.js` (ES Module)
-- `server/middleware/socketSecurity.js` (ES Module) - WebSocket security middleware
+## Overview
+This document maps the frontend components to their corresponding backend routes and socket events, providing a clear understanding of the system's data flow and communication patterns.
 
-Socket Events:
-```
-users:login                  // Enhanced with security monitoring
-users:logout                 // Enhanced with session management
-users:validateSession        // New - validates session security
-users:refreshSession        // New - handles session refresh
-users:revokeSession        // New - handles session revocation
-users:getActiveSessions    // New - lists active user sessions
-users:updatePassword       // New - with password history check
-users:getSecurityLogs     // New - access security audit logs
-registration:register      // Enhanced with security validation
-registration:validateEmail // Enhanced with rate limiting
-```
+## Authentication
 
-Security Features and Integration:
+### Login
+- **Frontend**: `components/auth/Login.js`
+- **Backend Route**: `POST /api/auth/login`
+- **Socket Events**:
+  - `auth:login`
+  - `auth:loginSuccess`
+  - `auth:loginError`
 
-1. Authentication Integration:
-   Frontend Components:
-   - `AuthProvider`: Context provider for authentication state
-   - `LoginForm`: Handles login with security feedback
-   - `MFAVerification`: Multi-factor authentication UI
-   - `SecurityPrompts`: Displays security-related notifications
-   
-   Backend Integration:
-   ```javascript
-   // Login flow
-   const loginResponse = await authHandler.login({
-     email,
-     password,
-     deviceInfo: {
-       ip: clientIP,
-       userAgent: browserInfo,
-       location: geoLocation
-     }
-   });
-   
-   // Handle different security scenarios
-   switch (loginResponse.status) {
-     case 'mfa_required':
-     case 'account_locked':
-     case 'password_expired':
-     case 'suspicious_activity':
-   }
-   ```
+### Registration
+- **Frontend**: `components/auth/Register.js`
+- **Backend Route**: `POST /api/auth/register`
+- **Socket Events**:
+  - `auth:register`
+  - `auth:registerSuccess`
+  - `auth:registerError`
 
-2. Session Security Implementation:
-   Frontend Features:
-   - Automatic session refresh
-   - Device tracking and management
-   - Session timeout monitoring
-   - Activity status updates
-   
-   Backend Integration:
-   ```javascript
-   // Session management
-   sessionManager.monitor({
-     onTimeout: handleTimeout,
-     onSecurityAlert: handleAlert,
-     onForceLogout: handleForceLogout
-   });
-   
-   // Session refresh cycle
-   sessionManager.startRefreshCycle({
-     interval: 15 * 60 * 1000, // 15 minutes
-     onRefreshNeeded: handleRefresh
-   });
-   ```
+## POS (Point of Sale)
 
-3. Security Monitoring Integration:
-   Frontend Features:
-   - Real-time security alerts
-   - Activity log display
-   - Security dashboard
-   - Threat notifications
-   
-   Backend Integration:
-   ```javascript
-   // Security monitoring
-   securityMonitor.watch({
-     onFailedLogin: handleFailedLogin,
-     onSuspiciousActivity: handleSuspiciousActivity,
-     onLocationChange: handleLocationChange
-   });
-   
-   // Audit logging
-   activityLogger.track({
-     level: 'security',
-     action: actionType,
-     details: actionDetails
-   });
-   ```
+### Order Management
+- **Frontend**: `components/pos/OrderForm.js`
+- **Backend Routes**:
+  - `POST /api/orders`
+  - `PUT /api/orders/:id`
+  - `GET /api/orders/:id`
+- **Socket Events**:
+  - `pos:createOrder`
+  - `pos:updateOrder`
+  - `pos:orderCreated`
+  - `pos:orderUpdated`
 
-4. Rate Limiting Implementation:
-   Frontend Features:
-   - Request throttling feedback
-   - Retry timing display
-   - Error state handling
-   - User guidance messages
-   
-   Backend Integration:
-   ```javascript
-   // Rate limit check
-   const rateLimitStatus = await rateLimiter.check({
-     action: actionType,
-     identifier: userIdentifier,
-     threshold: limitThreshold
-   });
-   
-   // Handle rate limiting
-   if (rateLimitStatus.limited) {
-     handleRateLimit(rateLimitStatus.retryAfter);
-   }
-   ```
+### Payment Processing
+- **Frontend**: `components/pos/PaymentModal.js`
+- **Backend Routes**:
+  - `POST /api/payments`
+  - `GET /api/payments/:id`
+- **Socket Events**:
+  - `pos:processPayment`
+  - `pos:paymentProcessed`
+  - `pos:paymentError`
 
-## 2. Dashboard
-Backend Files:
-- `server/routes/pos.js`
-- `server/routes/inventory.js`
-- `server/routes/analytics.js`
-- `server/routes/notifications.js`
+### Receipt Generation
+- **Frontend**: `components/pos/ReceiptPreview.js`
+- **Backend Routes**:
+  - `GET /api/receipts/:id`
+  - `POST /api/receipts/generate`
+- **Socket Events**:
+  - `pos:generateReceipt`
+  - `pos:receiptGenerated`
 
-Socket Events:
-```
-pos:getActiveOrders
-inventory:getLowStock
-analytics:getDashboardStats
-notifications:getUnread
-```
+## Kitchen Display System (KDS)
 
-## 3. POS System (/pos)
-Backend Files:
-- `server/routes/pos.js`
-- `server/routes/menuItems.js`
-- `server/routes/categories.js`
-- `server/routes/inventory.js`
+### Order Queue
+- **Frontend**: `components/kds/OrderQueue.js`
+- **Backend Routes**:
+  - `GET /api/kds/orders`
+  - `PUT /api/kds/orders/:id/status`
+- **Socket Events**:
+  - `kds:getOrders`
+  - `kds:updateOrderStatus`
+  - `kds:orderStatusUpdated`
 
-Socket Events:
-```
-pos:createOrder
-pos:updateOrderStatus
-pos:listOrders
-pos:getOrder
-menuItems:getAll
-menuItems:getByCategory
-categories:getAll
-inventory:checkStock
-```
+### Kitchen Status
+- **Frontend**: `components/kds/KitchenStatus.js`
+- **Backend Routes**:
+  - `GET /api/kds/status`
+  - `PUT /api/kds/status`
+- **Socket Events**:
+  - `kds:getStatus`
+  - `kds:updateStatus`
+  - `kds:statusUpdated`
 
-## 4. Kitchen Display System (/kds)
-Backend Files:
-- `server/routes/kds.js`
-- `server/routes/pos.js`
+## Inventory Management
 
-Socket Events:
-```
-kds:getActiveOrders
-kds:updateOrderStatus
-kds:updatePriority
-pos:orderCreated
-pos:orderUpdated
-```
+### Stock Management
+- **Frontend**: `components/inventory/StockList.js`
+- **Backend Routes**:
+  - `GET /api/inventory`
+  - `PUT /api/inventory/:id`
+  - `POST /api/inventory/transactions`
+- **Socket Events**:
+  - `inventory:getStock`
+  - `inventory:updateStock`
+  - `inventory:stockUpdated`
 
-## 5. Inventory Management (/inventory)
-Backend Files:
-- `server/routes/inventory.js`
-- `server/routes/ingredients.js`
-- `server/routes/suppliers.js`
+### Low Stock Alerts
+- **Frontend**: `components/inventory/LowStockAlert.js`
+- **Backend Routes**:
+  - `GET /api/inventory/alerts`
+- **Socket Events**:
+  - `inventory:getAlerts`
+  - `inventory:alertTriggered`
 
-Socket Events:
-```
-inventory:recordTransaction
-inventory:getStock
-ingredients:getAll
-ingredients:update
-suppliers:getAll
-suppliers:getOrders
-```
+## Menu Management
 
-## 6. Menu Management (/menu)
-Backend Files:
-- `server/routes/menuItems.js`
-- `server/routes/categories.js`
-- `server/routes/subcategories.js`
-- `server/routes/recipes.js`
+### Menu Items
+- **Frontend**: `components/menu/MenuItemForm.js`
+- **Backend Routes**:
+  - `GET /api/menu/items`
+  - `POST /api/menu/items`
+  - `PUT /api/menu/items/:id`
+- **Socket Events**:
+  - `menu:getItems`
+  - `menu:createItem`
+  - `menu:updateItem`
+  - `menu:itemUpdated`
 
-Socket Events:
-```
-menuItems:create
-menuItems:update
-menuItems:delete
-categories:manage
-recipes:manage
-```
+### Categories
+- **Frontend**: `components/menu/CategoryManager.js`
+- **Backend Routes**:
+  - `GET /api/menu/categories`
+  - `POST /api/menu/categories`
+  - `PUT /api/menu/categories/:id`
+- **Socket Events**:
+  - `menu:getCategories`
+  - `menu:createCategory`
+  - `menu:updateCategory`
+  - `menu:categoryUpdated`
 
-## 7. Analytics (/analytics)
-Backend Files:
-- `server/routes/analytics.js`
-- `server/routes/reports.js`
+## User Management
 
-Socket Events:
-```
-analytics:getSales
-analytics:getInventory
-analytics:getPredictions
-reports:generate
-```
+### User Operations
+- **Frontend**: `components/users/UserForm.js`
+- **Backend Routes**:
+  - `GET /api/users`
+  - `POST /api/users`
+  - `PUT /api/users/:id`
+- **Socket Events**:
+  - `users:getUsers`
+  - `users:createUser`
+  - `users:updateUser`
+  - `users:userUpdated`
 
-## 8. Staff Management (/staff)
-Backend Files:
-- `server/routes/users.js`
-- `server/routes/pos.js` (for performance metrics)
+### Role Management
+- **Frontend**: `components/users/RoleManager.js`
+- **Backend Routes**:
+  - `GET /api/roles`
+  - `POST /api/roles`
+  - `PUT /api/roles/:id`
+- **Socket Events**:
+  - `users:getRoles`
+  - `users:createRole`
+  - `users:updateRole`
+  - `users:roleUpdated`
 
-Socket Events:
-```
-users:create
-users:update
-users:delete
-users:getPerformance
-```
+## Settings Management
 
-## 9. Customer Management (/customers)
-Backend Files:
-- `server/routes/loyalty.js`
-- `server/routes/pos.js` (for order history)
+### User Settings
+- **Frontend**: `components/settings/UserSettings.js`
+- **Backend Routes**:
+  - `GET /api/settings/user`
+  - `PUT /api/settings/user`
+- **Socket Events**:
+  - `settings:getUserSettings`
+  - `settings:saveUserSettings`
+  - `settings:userSettingsUpdated`
 
-Socket Events:
-```
-loyalty:getCustomer
-loyalty:updatePoints
-loyalty:getRewards
-pos:getCustomerOrders
-```
+### Role Settings
+- **Frontend**: `components/settings/RoleSettings.js`
+- **Backend Routes**:
+  - `GET /api/settings/roles`
+  - `PUT /api/settings/roles`
+- **Socket Events**:
+  - `settings:getRoleSettings`
+  - `settings:saveRoleSettings`
+  - `settings:roleSettingsUpdated`
 
-## 10. Settings (/settings)
-Backend Files:
-- `server/routes/restaurants.js`
-- `server/routes/branches.js`
-- `server/routes/users.js`
+### System Settings
+- **Frontend**: `components/settings/SystemSettings.js`
+- **Backend Routes**:
+  - `GET /api/settings/system`
+  - `PUT /api/settings/system`
+- **Socket Events**:
+  - `settings:getSystemSettings`
+  - `settings:saveSystemSettings`
+  - `settings:systemSettingsUpdated`
 
-Socket Events:
-```
-restaurants:update
-branches:update
-users:updatePermissions
-```
+## Analytics and Reporting
 
-## Shared Components Integration
+### Sales Reports
+- **Frontend**: `components/analytics/SalesReport.js`
+- **Backend Routes**:
+  - `GET /api/analytics/sales`
+  - `GET /api/analytics/sales/export`
+- **Socket Events**:
+  - `analytics:getSalesData`
+  - `analytics:salesDataUpdated`
 
-### NotificationCenter
-Backend Files:
-- `server/routes/notifications.js`
+### Inventory Reports
+- **Frontend**: `components/analytics/InventoryReport.js`
+- **Backend Routes**:
+  - `GET /api/analytics/inventory`
+  - `GET /api/analytics/inventory/export`
+- **Socket Events**:
+  - `analytics:getInventoryData`
+  - `analytics:inventoryDataUpdated`
 
-Socket Events:
-```
-notifications:subscribe
-notifications:create
-notifications:markRead
-notifications:getUnread
-```
+### Staff Reports
+- **Frontend**: `components/analytics/StaffReport.js`
+- **Backend Routes**:
+  - `GET /api/analytics/staff`
+  - `GET /api/analytics/staff/export`
+- **Socket Events**:
+  - `analytics:getStaffData`
+  - `analytics:staffDataUpdated`
 
-### GlobalSearch
-Backend Files:
-- Multiple route files with search endpoints
+## Notification System
 
-Socket Events:
-```
-search:global
-search:byCategory
-```
+### User Notifications
+- **Frontend**: `components/notifications/NotificationCenter.js`
+- **Backend Routes**:
+  - `GET /api/notifications`
+  - `PUT /api/notifications/:id`
+- **Socket Events**:
+  - `notifications:getNotifications`
+  - `notifications:markAsRead`
+  - `notifications:newNotification`
 
-### DataGrid
-Backend Files:
-- Respective route files for each data type
+### System Alerts
+- **Frontend**: `components/notifications/SystemAlerts.js`
+- **Backend Routes**:
+  - `GET /api/alerts`
+  - `PUT /api/alerts/:id`
+- **Socket Events**:
+  - `notifications:getAlerts`
+  - `notifications:alertTriggered`
+  - `notifications:alertResolved`
 
-Socket Events:
-```
-data:fetch
-data:sort
-data:filter
-data:export
-```
+## Error Handling
 
-## Real-time Updates Integration
-Backend Files:
-- `server/routes/index.js` (Socket.IO setup)
-- `server/database.js` (PouchDB/CouchDB sync)
+### Frontend Error Handling
+- **Components**: `components/ErrorBoundary.js`
+- **Socket Events**:
+  - `error:client`
+  - `error:server`
 
-Socket Events:
-```
-connection
-disconnect
-sync:start
-sync:complete
-sync:error
-```
+### Backend Error Handling
+- **Routes**: All API routes
+- **Socket Events**:
+  - `error:validation`
+  - `error:permission`
+  - `error:system`
 
-### Sync Monitoring and Error Recovery
+## Data Flow Patterns
 
-#### Sync Metrics
-```javascript
-// Real-time sync metrics
-{
-  startTime: timestamp,      // When sync started
-  totalDocs: number,        // Total documents to sync
-  completedDocs: number,    // Documents successfully synced
-  failedDocs: number,       // Failed document syncs
-  lastSync: timestamp,      // Last successful sync
-  errors: Array<{          // Detailed error history
-    timestamp: number,
-    error: string
-  }>,
-  retries: number          // Number of retry attempts
-}
-```
+### Real-time Updates
+1. Backend emits socket event
+2. Frontend socket listener receives event
+3. Component state updates
+4. UI re-renders with new data
 
-#### Sync Events
-```javascript
-sync:metrics        // Updated sync progress metrics
-sync:change         // Document changes processed
-sync:status         // Current sync status updates
-sync:error          // Sync error notifications
-```
+### Request-Response Flow
+1. Frontend makes API request
+2. Backend processes request
+3. Response sent to frontend
+4. Component updates with response data
 
-#### Error Recovery Features
-1. Automatic Retry:
-   - Exponential backoff retry strategy
-   - Configurable retry limits
-   - Error tracking and reporting
+### WebSocket Connection
+1. Frontend establishes socket connection
+2. Authentication token sent
+3. Connection maintained
+4. Real-time events flow
 
-2. Data Validation:
-   - Pre-sync data integrity checks
-   - Post-sync validation
-   - Conflict resolution handling
+## Security Considerations
 
-3. Performance Monitoring:
-   - Sync speed metrics
-   - Document processing rates
-   - Network latency tracking
+### Authentication Flow
+1. User credentials sent to backend
+2. JWT token generated
+3. Token stored in frontend
+4. Token used for subsequent requests
 
-4. User Feedback:
-   - Real-time progress updates
-   - Error notifications
-   - Recovery status reporting
+### Authorization Checks
+1. Frontend checks user role
+2. Backend validates permissions
+3. Access granted/denied
+4. UI updates accordingly
 
-## Error Handling Integration
-Backend Files:
-- `server/routes/utils.js`
-- `server/routes/logs.js`
+## Performance Optimization
 
-Socket Events:
-```
-error:log
-error:notify
-error:recover
-```
+### Data Caching
+- Frontend caches API responses
+- Socket events update cache
+- Cache invalidation on updates
 
-## Database Integration
-Backend Files:
-- `server/database.js`
-- Individual PouchDB instances for each collection
-
-Key Database Collections:
-```
-- usersDB
-- restaurantsDB
-- branchesDB
-- menuItemsDB
-- ingredientsDB
-- posDB
-- kdsDB
-- inventoryTransactionsDB
-- loyaltyDB
-- notificationsDB
-```
-
-### Synchronization Status Monitoring
-Frontend Components:
-- `SyncStatusIndicator`: Real-time sync status display
-- `DatabaseHealthMonitor`: Database connection health dashboard
-- `OfflineIndicator`: Shows offline/online state
-
-Backend Events:
-```javascript
-// Sync status events
-sync:started          // Sync process initiated
-sync:complete         // Sync process completed
-sync:error           // Sync error occurred
-sync:paused          // Sync paused (offline)
-sync:active          // Sync resumed (online)
-db:connection        // Database connection status
-db:validation        // Database validation status
-```
-
-Integration Flow:
-1. Frontend subscribes to sync events via WebSocket
-2. Backend emits events for sync status changes
-3. UI updates to reflect current sync state
-4. Error handling and retry logic implemented
-5. Automatic conflict resolution
-
-## File Requirements for Each Page
-
-### Dashboard Page
-Required Database Access:
-- posDB (active orders)
-- inventoryDB (stock levels)
-- notificationsDB (alerts)
-- analyticsDB (real-time stats)
-
-### POS Page
-Required Database Access:
-- menuItemsDB
-- categoriesDB
-- posDB
-- inventoryDB
-- customersDB
-
-### KDS Page
-Required Database Access:
-- kdsDB
-- posDB
-- menuItemsDB
-
-### Inventory Page
-Required Database Access:
-- inventoryDB
-- ingredientsDB
-- suppliersDB
-- transactionsDB
-
-### Menu Management Page
-Required Database Access:
-- menuItemsDB
-- categoriesDB
-- subcategoriesDB
-- recipesDB
-
-### Analytics Page
-Required Database Access:
-- posDB
-- inventoryDB
-- staffDB
-- customersDB
-
-### Staff Management Page
-Required Database Access:
-- usersDB
-- posDB (performance data)
-- logsDB
-
-### Customer Management Page
-Required Database Access:
-- customersDB
-- loyaltyDB
-- posDB (order history)
-
-### Settings Page
-Required Database Access:
-- restaurantsDB
-- branchesDB
-- usersDB
-- settingsDB
+### Real-time Updates
+- WebSocket for instant updates
+- Fallback to polling if needed
+- Optimistic UI updates

@@ -14,21 +14,20 @@ const validateIngredient = async (data, db, isUpdate = false) => {
   const errors = [];
   const sanitizedData = {
     name: sanitizeHtml(data.name || ''),
-    unit: sanitizeHtml(data.unit || ''),
-    stockLevel: Number.isFinite(data.stockLevel) ? Number(data.stockLevel) : undefined,
-    minimumThreshold: Number.isFinite(data.minimumThreshold) ? Number(data.minimumThreshold) : undefined,
-    cost: Number.isFinite(data.cost) ? Number(data.cost) : undefined,
-    supplierInfo: {
-      name: data.supplierInfo?.name ? sanitizeHtml(data.supplierInfo.name) : undefined,
-      contactPerson: data.supplierInfo?.contactPerson ? sanitizeHtml(data.supplierInfo.contactPerson) : undefined,
-      email: data.supplierInfo?.email ? sanitizeHtml(data.supplierInfo.email) : undefined,
-      phone: data.supplierInfo?.phone ? sanitizeHtml(data.supplierInfo.phone) : undefined,
-      leadTime: Number.isFinite(data.supplierInfo?.leadTime) ? Number(data.supplierInfo.leadTime) : undefined,
-    },
-    batchInfo: Array.isArray(data.batchInfo) ? data.batchInfo : [],
-    location: data.location ? sanitizeHtml(data.location) : undefined,
-    category: data.category ? sanitizeHtml(data.category) : undefined,
+    description: data.description ? sanitizeHtml(data.description) : '',
+    unit: data.unit ? sanitizeHtml(data.unit) : '',
+    cost: Number.isFinite(data.cost) ? Number(data.cost) : 0,
+    stockLevel: Number.isFinite(data.stockLevel) ? Number(data.stockLevel) : 0,
+    minimumStockLevel: Number.isFinite(data.minimumStockLevel) ? Number(data.minimumStockLevel) : 0,
     isActive: typeof data.isActive === 'boolean' ? data.isActive : true,
+    allergens: Array.isArray(data.allergens) ? data.allergens.map(a => sanitizeHtml(a)) : [],
+    nutritionalInfo: {
+      calories: Number.isFinite(data.nutritionalInfo?.calories) ? Number(data.nutritionalInfo.calories) : undefined,
+      protein: Number.isFinite(data.nutritionalInfo?.protein) ? Number(data.nutritionalInfo.protein) : undefined,
+      carbs: Number.isFinite(data.nutritionalInfo?.carbs) ? Number(data.nutritionalInfo.carbs) : undefined,
+      fat: Number.isFinite(data.nutritionalInfo?.fat) ? Number(data.nutritionalInfo.fat) : undefined,
+      fiber: Number.isFinite(data.nutritionalInfo?.fiber) ? Number(data.nutritionalInfo.fiber) : undefined,
+    },
   };
 
   // Validate name
@@ -37,7 +36,10 @@ const validateIngredient = async (data, db, isUpdate = false) => {
   } else if (!isUpdate) {
     try {
       const result = await db.find({
-        selector: { type: 'ingredient', name: sanitizedData.name },
+        selector: { 
+          type: 'ingredient', 
+          name: sanitizedData.name 
+        },
         limit: 1,
       });
       if (result.docs.length > 0) {
@@ -54,48 +56,37 @@ const validateIngredient = async (data, db, isUpdate = false) => {
     errors.push('Unit is required and must be 1-50 characters');
   }
 
-  // Validate stockLevel
-  if (!Number.isFinite(sanitizedData.stockLevel) || sanitizedData.stockLevel < 0) {
-    errors.push('Stock level is required and must be non-negative');
-  }
-
-  // Validate minimumThreshold
-  if (!Number.isFinite(sanitizedData.minimumThreshold) || sanitizedData.minimumThreshold < 0) {
-    errors.push('Minimum threshold is required and must be non-negative');
-  }
-
   // Validate cost
-  if (Number.isFinite(sanitizedData.cost) && sanitizedData.cost < 0) {
-    errors.push('Cost must be non-negative');
+  if (!Number.isFinite(sanitizedData.cost) || sanitizedData.cost < 0) {
+    errors.push('Cost must be a non-negative number');
   }
 
-  // Validate supplierInfo
-  if (sanitizedData.supplierInfo.email && !validator.isEmail(sanitizedData.supplierInfo.email)) {
-    errors.push('Invalid supplier email format');
+  // Validate stock levels
+  if (!Number.isFinite(sanitizedData.stockLevel) || sanitizedData.stockLevel < 0) {
+    errors.push('Stock level must be a non-negative number');
   }
-  if (sanitizedData.supplierInfo.phone && !validator.isMobilePhone(sanitizedData.supplierInfo.phone, 'any')) {
-    errors.push('Invalid supplier phone number format');
+  if (!Number.isFinite(sanitizedData.minimumStockLevel) || sanitizedData.minimumStockLevel < 0) {
+    errors.push('Minimum stock level must be a non-negative number');
   }
-  if (Number.isFinite(sanitizedData.supplierInfo.leadTime) && sanitizedData.supplierInfo.leadTime < 0) {
-    errors.push('Supplier lead time must be non-negative');
+  if (sanitizedData.minimumStockLevel > sanitizedData.stockLevel) {
+    errors.push('Minimum stock level cannot be greater than current stock level');
   }
 
-  // Validate batchInfo
-  if (sanitizedData.batchInfo.length > 0) {
-    for (const batch of sanitizedData.batchInfo) {
-      if (!batch.batchId) {
-        errors.push('Batch ID is required for each batch');
-      }
-      if (!Number.isFinite(batch.quantity) || batch.quantity <= 0) {
-        errors.push('Batch quantity must be a positive number');
-      }
-      if (batch.expiryDate && !validator.isISO8601(batch.expiryDate)) {
-        errors.push('Invalid expiry date format');
-      }
-      if (batch.receivedDate && !validator.isISO8601(batch.receivedDate)) {
-        errors.push('Invalid received date format');
-      }
-    }
+  // Validate nutritional info
+  if (Number.isFinite(sanitizedData.nutritionalInfo.calories) && sanitizedData.nutritionalInfo.calories < 0) {
+    errors.push('Calories must be non-negative');
+  }
+  if (Number.isFinite(sanitizedData.nutritionalInfo.protein) && sanitizedData.nutritionalInfo.protein < 0) {
+    errors.push('Protein must be non-negative');
+  }
+  if (Number.isFinite(sanitizedData.nutritionalInfo.carbs) && sanitizedData.nutritionalInfo.carbs < 0) {
+    errors.push('Carbohydrates must be non-negative');
+  }
+  if (Number.isFinite(sanitizedData.nutritionalInfo.fat) && sanitizedData.nutritionalInfo.fat < 0) {
+    errors.push('Fat must be non-negative');
+  }
+  if (Number.isFinite(sanitizedData.nutritionalInfo.fiber) && sanitizedData.nutritionalInfo.fiber < 0) {
+    errors.push('Fiber must be non-negative');
   }
 
   return { isValid: errors.length === 0, errors, sanitizedData };

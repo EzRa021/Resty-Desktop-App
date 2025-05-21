@@ -1,7 +1,10 @@
 {
-  "watch": ["electron/server/**/*"],
-  "ignore": ["*.test.js", "*.spec.js", "node_modules"],
-  "ext": "js,mjs,json",
-  "exec": "cross-env ELECTRON_DEV=true NODE_ENV=development node --trace-warnings ./electron/server/index.js",
-  "verbose": true
+  "watch": ["electron/server"],
+  "ext": "js,json",
+  "ignore": ["node_modules", "dev-databases"],
+  "exec": "node electron/server/index.js",
+  "env": {
+    "NODE_ENV": "development",
+    "ELECTRON_DEV": "true"
+  }
 }

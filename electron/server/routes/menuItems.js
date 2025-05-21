@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import validator from 'validator';
 import sanitizeHtml from 'sanitize-html';
 import slugify from 'slugify';
-import { validateUserSession } from './utils.js';
+import { sessionManager } from '../utils/sessionManager.js';
 
 /**
  * Validates menu item data
@@ -25,7 +25,7 @@ const validateMenuItem = async (data, db, categoriesDB, ingredientsDB, restauran
       large: Number.isFinite(data.price?.large) ? Number(data.price.large) : undefined,
       special: Number.isFinite(data.price?.special) ? Number(data.price.special) : undefined,
     },
-    category: data.category ? sanitizeHtml(data.category) : '',
+    categoryId: data.categoryId ? sanitizeHtml(data.categoryId) : '',
     restaurantId: data.restaurantId ? sanitizeHtml(data.restaurantId) : '',
     branchId: data.branchId ? sanitizeHtml(data.branchId) : '',
     availability: data.availability || { isAvailable: true, customHours: [] },
@@ -72,11 +72,11 @@ const validateMenuItem = async (data, db, categoriesDB, ingredientsDB, restauran
   }
 
   // Validate category
-  if (!sanitizedData.category) {
-    errors.push('Category is required');
+  if (!sanitizedData.categoryId) {
+    errors.push('Category ID is required');
   } else {
     try {
-      const category = await categoriesDB.get(sanitizedData.category).catch(() => null);
+      const category = await categoriesDB.get(sanitizedData.categoryId).catch(() => null);
       if (!category || !category.isActive) {
         errors.push('Invalid or inactive category ID');
       }
@@ -190,16 +190,30 @@ export const registerSocketEvents = (socket, {
   categoriesDB, 
   ingredientsDB, 
   restaurantsDB, 
-  branchesDB
+  branchesDB,
+  sessionDB,
+  logsDB 
 }) => {
-  if (!db || !categoriesDB || !ingredientsDB || !restaurantsDB || !branchesDB) {
+  if (!db || !categoriesDB || !ingredientsDB || !restaurantsDB || !branchesDB || !sessionDB || !logsDB) {
     console.error('Missing required database dependencies for menu item routes');
     return;
   }
 
   // Create menu item
-  socket.on('menuItems:create', async (data, callback) => {
+  socket.on('menuItem:create', async (data, callback) => {
+    console.log('Creating menu item:', data);
     try {
+      // Validate session using sessionManager
+      const sessionValidation = await sessionManager.validateSession(sessionDB, data.sessionId, { logsDB });
+      if (!sessionValidation.isValid) {
+        console.error('Session validation failed:', sessionValidation.reason);
+        return callback?.({
+          success: false,
+          message: sessionValidation.reason
+        });
+      }
+
+      // Validate data
       const validation = await validateMenuItem(
         data, 
         db, 
@@ -210,23 +224,131 @@ export const registerSocketEvents = (socket, {
       );
 
       if (!validation.isValid) {
-        callback?.({ success: false, errors: validation.errors });
-        return;
+        console.error('Menu item validation failed:', validation.errors);
+        return callback?.({
+          success: false,
+          message: 'Validation failed',
+          errors: validation.errors
+        });
       }
 
+      // Create menu item document
       const menuItem = {
-        _id: uuidv4(),
+        _id: `menuItem_${uuidv4()}`,
         type: 'menuItem',
         ...validation.sanitizedData,
         createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       };
 
+      // Save to database
       await db.put(menuItem);
-      callback?.({ success: true, menuItem });
+      console.log('Menu item created:', menuItem._id);
+
+      // Log the action
+      await logsDB.put({
+        _id: `log_${uuidv4()}`,
+        type: 'log',
+        category: 'menuItem',
+        action: 'create',
+        menuItemId: menuItem._id,
+        restaurantId: data.restaurantId,
+        branchId: data.branchId,
+        timestamp: new Date().toISOString(),
+        level: 'info',
+        message: `Menu item created: ${menuItem.name}`
+      });
+
+      // Emit event to other clients
+      socket.broadcast.emit('menuItem:created', menuItem);
+
+      // Send success response
+      callback?.({
+        success: true,
+        message: 'Menu item created successfully',
+        data: menuItem
+      });
 
     } catch (error) {
       console.error('Error creating menu item:', error);
-      callback?.({ success: false, error: 'Failed to create menu item' });
+      
+      // Log error
+      try {
+        await logsDB.put({
+          _id: `log_${uuidv4()}`,
+          type: 'log',
+          category: 'menuItem',
+          action: 'create',
+          error: error.message,
+          timestamp: new Date().toISOString(),
+          level: 'error',
+          message: `Failed to create menu item: ${error.message}`
+        });
+      } catch (logError) {
+        console.error('Failed to log error:', logError);
+      }
+
+      callback?.({
+        success: false,
+        message: 'Failed to create menu item',
+        error: error.message
+      });
+    }
+  });
+
+  // Get menu items by category
+  socket.on('menuItem:getByCategory', async ({ categoryId, restaurantId, branchId, sessionId }, callback) => {
+    console.log('Getting menu items by category:', { categoryId, restaurantId, branchId });
+    
+    try {
+      // Validate session using sessionManager
+      const sessionValidation = await sessionManager.validateSession(sessionDB, sessionId, { logsDB });
+      if (!sessionValidation.isValid) {
+        console.error('Session validation failed:', sessionValidation.reason);
+        return callback?.({
+          success: false,
+          message: sessionValidation.reason
+        });
+      }
+
+      // Build query
+      const selector = {
+        type: 'menuItem',
+        isActive: true,
+        categoryId
+      };
+
+      if (restaurantId) selector.restaurantId = restaurantId;
+      if (branchId) selector.branchId = branchId;
+
+      // Get menu items
+      const result = await db.find({
+        selector,
+        use_index: ['type', 'categoryId', 'isActive']
+      });
+
+      // Sort in memory
+      const sortedDocs = result.docs.sort((a, b) => {
+        // First sort by displayOrder if available
+        if (a.displayOrder !== b.displayOrder) {
+          return (a.displayOrder || 0) - (b.displayOrder || 0);
+        }
+        // Then sort by name
+        return a.name.localeCompare(b.name);
+      });
+
+      callback?.({
+        success: true,
+        data: sortedDocs
+      });
+
+    } catch (error) {
+      console.error('Error getting menu items by category:', error);
+      callback?.({
+        success: false,
+        message: 'Failed to get menu items',
+        error: error.message
+      });
     }
   });
 

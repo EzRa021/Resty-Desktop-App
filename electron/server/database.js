@@ -5,19 +5,13 @@ import electron from 'electron';
 import { existsSync, mkdirSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { COUCHDB_CONFIG } from './config.js';
+import { initializeDatabases, cleanupDatabases } from './utils/database.js';
 
 const app = electron?.app || { getPath: (p) => process.cwd() };
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Register PouchDB plugins
 PouchDB.plugin(PouchDBFind);
-
-// Database configuration with absolute paths
-const DB_CONFIG = {
-  path: process.env.NODE_ENV === 'development' 
-    ? path.resolve(process.cwd(), 'dev-databases')
-    : path.join(app.getPath('userData'), 'databases')
-};
 
 // Add performance monitoring
 const syncMetrics = {
@@ -67,38 +61,69 @@ const ensureRemoteDatabaseExists = async (remoteURL, auth) => {
         },
       });
       if (!createResponse.ok) {
-        throw new Error(`Failed to create remote database: ${createResponse.statusText}`);
+        const errorText = await createResponse.text();
+        throw new Error(`Failed to create remote database: ${createResponse.statusText} - ${errorText}`);
       }
+      console.log(`✓ Remote database created: ${remoteURL}`);
+    } else if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to check remote database: ${response.statusText} - ${errorText}`);
     }
   } catch (error) {
-    console.error(`Error ensuring remote database exists: ${remoteURL}`, error);
+    console.error(`✗ Error ensuring remote database exists: ${remoteURL}`, error);
+    console.error('Error details:', error);
     throw error;
   }
 };
 
 export const setupSync = async (databases) => {
-  console.log('Setting up database synchronization...');
+  console.log('\n=== Database Sync Setup Started ===');
+  console.log('Timestamp:', new Date().toISOString());
+  console.log('Number of databases to sync:', Object.keys(databases).length);
   
   try {
     const io = global.io; // Get Socket.IO instance
+    if (!io) {
+      console.warn('! Socket.IO instance not found, sync status updates will not be emitted');
+    }
     
     // Initialize sync for each database
     const syncPromises = Object.entries(databases).map(async ([dbName, db]) => {
       try {
-        const remoteURL = COUCHDB_CONFIG.urls[dbName.replace('DB', '').toLowerCase()];
+        // Convert database name to CouchDB URL key format
+        const dbKey = dbName.replace('DB', '').toLowerCase();
+        const remoteURL = COUCHDB_CONFIG.urls[dbKey];
+        
+        if (!remoteURL) {
+          console.warn(`✗ No remote URL configured for database: ${dbName}`);
+          return false;
+        }
+
+        console.log(`\nSetting up sync for: ${dbName}`);
+        console.log(`Remote URL: ${remoteURL}`);
+        console.log(`Local database path: ${db.name}`);
+        
+        // Verify local database is accessible
+        try {
+          const localInfo = await db.info();
+          console.log(`✓ Local database is accessible`);
+          console.log(`  - Document count: ${localInfo.doc_count}`);
+          console.log(`  - Update sequence: ${localInfo.update_seq}`);
+        } catch (error) {
+          console.error(`✗ Local database is not accessible:`, error.message);
+          throw error;
+        }
         
         // Emit initial sync status
         io?.emit('sync:status', { 
           database: dbName,
           status: 'initializing'
         });
-        if (!remoteURL) {
-          console.warn(`No remote URL configured for database: ${dbName}`);
-          return false;
-        }
 
         // Ensure remote database exists
+        console.log(`Checking remote database: ${dbKey}`);
         await ensureRemoteDatabaseExists(remoteURL, COUCHDB_CONFIG.auth);
+        console.log(`✓ Remote database exists: ${dbKey}`);
 
         // Initialize metrics
         updateSyncMetrics(dbName, 'startTime', Date.now());
@@ -108,23 +133,48 @@ export const setupSync = async (databases) => {
         updateSyncMetrics(dbName, 'errors', []);
         updateSyncMetrics(dbName, 'retries', 0);
 
-        // Set up two-way sync
+        // Set up two-way sync with retry options
+        console.log(`Creating remote database connection: ${remoteURL}`);
         const remoteDb = new PouchDB(remoteURL, {
-          auth: COUCHDB_CONFIG.auth
+          auth: COUCHDB_CONFIG.auth,
+          ...COUCHDB_CONFIG.options
         });        
-        db.sync(remoteDb, {
+
+        // Verify remote database is accessible
+        try {
+          const remoteInfo = await remoteDb.info();
+          console.log(`✓ Remote database is accessible`);
+          console.log(`  - Document count: ${remoteInfo.doc_count}`);
+          console.log(`  - Update sequence: ${remoteInfo.update_seq}`);
+        } catch (error) {
+          console.error(`✗ Remote database is not accessible:`, error.message);
+          throw error;
+        }
+
+        console.log(`Starting sync for ${dbName}`);
+        const sync = db.sync(remoteDb, {
           live: true,
           retry: true,
-          auth: COUCHDB_CONFIG.auth
-        })
+          batch_size: 100,
+          batches_limit: 2,
+          auth: COUCHDB_CONFIG.auth,
+          timeout: 60000, // 1 minute timeout
+          heartbeat: 10000 // 10 second heartbeat
+        });
+
+        sync
         .on('change', function (change) {
           updateSyncMetrics(dbName, 'completedDocs', 
             (syncMetrics.completedDocs[dbName] || 0) + change.docs.length);
           io?.emit('sync:change', { database: dbName, change });
+          console.log(`✓ Sync change for ${dbName}: ${change.docs.length} documents`);
+          console.log(`  Progress: ${syncMetrics.completedDocs[dbName] || 0} documents synced`);
         })
         .on('active', function () {
           updateSyncMetrics(dbName, 'lastSync', Date.now());
           io?.emit('sync:status', { database: dbName, status: 'active' });
+          console.log(`✓ Sync active for ${dbName}`);
+          console.log(`  Last sync: ${new Date(syncMetrics.lastSync[dbName]).toISOString()}`);
         })
         .on('paused', function (err) {
           io?.emit('sync:status', { 
@@ -133,12 +183,18 @@ export const setupSync = async (databases) => {
             error: err,
             metrics: syncMetrics[dbName]
           });
+          console.log(`! Sync paused for ${dbName}`);
+          if (err) {
+            console.log(`  Reason: ${err.message}`);
+            console.log(`  Error details:`, err);
+          }
         })
         .on('error', function (err) {
           const errors = syncMetrics.errors[dbName] || [];
           errors.push({
             timestamp: Date.now(),
-            error: err.message
+            error: err.message,
+            details: err
           });
           updateSyncMetrics(dbName, 'errors', errors);
           updateSyncMetrics(dbName, 'retries', (syncMetrics.retries[dbName] || 0) + 1);
@@ -149,6 +205,18 @@ export const setupSync = async (databases) => {
             error: err.message,
             metrics: syncMetrics[dbName]
           });
+
+          console.error(`✗ Sync error for ${dbName}:`, err.message);
+          console.error(`  Retry count: ${syncMetrics.retries[dbName]}`);
+          console.error(`  Error timestamp: ${new Date().toISOString()}`);
+          console.error(`  Error details:`, err);
+
+          // Attempt to restart sync after error
+          setTimeout(() => {
+            console.log(`Attempting to restart sync for ${dbName}`);
+            sync.cancel();
+            setupSync({ [dbName]: db });
+          }, 5000); // Wait 5 seconds before retrying
         })
         .on('complete', function (info) {
           updateSyncMetrics(dbName, 'lastSync', Date.now());
@@ -158,12 +226,18 @@ export const setupSync = async (databases) => {
             info,
             metrics: syncMetrics[dbName]
           });
+          console.log(`✓ Sync complete for ${dbName}`);
+          console.log(`  Total documents: ${syncMetrics.completedDocs[dbName] || 0}`);
+          console.log(`  Last sync: ${new Date(syncMetrics.lastSync[dbName]).toISOString()}`);
+          console.log(`  Sync info:`, info);
         });
 
-        console.log(`Database ${dbName} sync configured with ${remoteURL}`);
+        console.log(`✓ Database ${dbName} sync configured successfully`);
         return true;
       } catch (error) {
-        console.error(`Failed to setup sync for ${dbName}:`, error);
+        console.error(`✗ Failed to setup sync for ${dbName}:`, error.message);
+        console.error(`  Error details:`, error);
+        console.error(`  Error stack:`, error.stack);
         return false;
       }
     });
@@ -172,234 +246,46 @@ export const setupSync = async (databases) => {
     const allSuccessful = results.every(Boolean);
 
     if (allSuccessful) {
-      console.log('Database synchronization setup completed successfully');
+      console.log('\n=== Database Sync Setup Completed ===');
+      console.log('Timestamp:', new Date().toISOString());
+      console.log('All databases are now syncing with CouchDB');
+      console.log('\nSynced databases:');
+      Object.keys(databases).forEach(dbName => {
+        console.log(`- ${dbName}`);
+      });
+      console.log('\n=======================================\n');
     } else {
-      console.warn('Some database synchronizations failed to setup');
+      console.warn('\n=== Database Sync Setup Partially Completed ===');
+      console.warn('Timestamp:', new Date().toISOString());
+      console.warn('Some databases failed to sync with CouchDB');
+      console.warn('\nFailed databases:');
+      Object.entries(databases).forEach(([dbName, success]) => {
+        if (!success) console.warn(`- ${dbName}`);
+      });
+      console.warn('\n=======================================\n');
     }
 
     return allSuccessful;
   } catch (error) {
-    console.error('Error setting up database synchronization:', error);
+    console.error('\n=== Database Sync Setup Failed ===');
+    console.error('Timestamp:', new Date().toISOString());
+    console.error('Error:', error.message);
+    console.error('Error details:', error);
+    console.error('Error stack:', error.stack);
+    console.error('=======================================\n');
     throw error;
   }
 };
 
 export const setupDatabases = async () => {
-  console.log('Setting up PouchDB databases...');
-  console.log('Database path:', DB_CONFIG.path);
-
   try {
-    // Ensure database directory exists
-    if (!existsSync(DB_CONFIG.path)) {
-      console.log(`Creating database directory: ${DB_CONFIG.path}`);
-      mkdirSync(DB_CONFIG.path, { recursive: true });
-    }
-
-    // Initialize databases with indexes
-    const databases = {
-      usersDB: new PouchDB(path.join(DB_CONFIG.path, 'users'), DB_CONFIG.options),
-      restaurantsDB: new PouchDB(path.join(DB_CONFIG.path, 'restaurants'), DB_CONFIG.options),
-      branchesDB: new PouchDB(path.join(DB_CONFIG.path, 'branches'), DB_CONFIG.options),
-      sessionDB: new PouchDB(path.join(DB_CONFIG.path, 'sessions'), DB_CONFIG.options),
-      logsDB: new PouchDB(path.join(DB_CONFIG.path, 'logs'), DB_CONFIG.options),
-      categoriesDB: new PouchDB(path.join(DB_CONFIG.path, 'categories'), DB_CONFIG.options),
-      subcategoriesDB: new PouchDB(path.join(DB_CONFIG.path, 'subcategories'), DB_CONFIG.options),
-      menuItemsDB: new PouchDB(path.join(DB_CONFIG.path, 'menu_items'), DB_CONFIG.options),
-      ingredientsDB: new PouchDB(path.join(DB_CONFIG.path, 'ingredients'), DB_CONFIG.options),
-      recipesDB: new PouchDB(path.join(DB_CONFIG.path, 'recipes'), DB_CONFIG.options),
-      posDB: new PouchDB(path.join(DB_CONFIG.path, 'pos'), DB_CONFIG.options),
-      inventoryTransactionsDB: new PouchDB(path.join(DB_CONFIG.path, 'inventory_transactions'), DB_CONFIG.options),
-      kdsDB: new PouchDB(path.join(DB_CONFIG.path, 'kds'), DB_CONFIG.options),
-      suppliersDB: new PouchDB(path.join(DB_CONFIG.path, 'suppliers'), DB_CONFIG.options),
-      recipeVersionsDB: new PouchDB(path.join(DB_CONFIG.path, 'recipe_versions'), DB_CONFIG.options),
-      tablesDB: new PouchDB(path.join(DB_CONFIG.path, 'tables'), DB_CONFIG.options),
-      specialsDB: new PouchDB(path.join(DB_CONFIG.path, 'specials'), DB_CONFIG.options),
-      wasteRecordsDB: new PouchDB(path.join(DB_CONFIG.path, 'waste_records'), DB_CONFIG.options),
-      loyaltyDB: new PouchDB(path.join(DB_CONFIG.path, 'loyalty'), DB_CONFIG.options)
-    };
-
-    // Create indexes for each database
-    await Promise.all([
-      // Users indexes
-      databases.usersDB.createIndex({
-        index: {
-          fields: ['type', 'email']
-        }
-      }),
-      databases.usersDB.createIndex({
-        index: {
-          fields: ['type', 'restaurantId']
-        }
-      }),
-
-      // Restaurants indexes
-      databases.restaurantsDB.createIndex({
-        index: {
-          fields: ['type', 'name']
-        }
-      }),
-
-      // Branches indexes
-      databases.branchesDB.createIndex({
-        index: {
-          fields: ['type', 'restaurantId']
-        }
-      }),
-
-      // Sessions indexes
-      databases.sessionDB.createIndex({
-        index: {
-          fields: ['type', 'userId']
-        }
-      }),
-      databases.sessionDB.createIndex({
-        index: {
-          fields: ['type', 'expiresAt']
-        }
-      }),
-
-      // Logs indexes
-      databases.logsDB.createIndex({
-        index: {
-          fields: ['type', 'timestamp']
-        }
-      }),
-      databases.logsDB.createIndex({
-        index: {
-          fields: ['type', 'userId', 'timestamp']
-        }
-      }),
-
-      // Categories indexes
-      databases.categoriesDB.createIndex({
-        index: {
-          fields: ['type', 'restaurantId']
-        }
-      }),
-
-      // Subcategories indexes
-      databases.subcategoriesDB.createIndex({
-        index: {
-          fields: ['type', 'categoryId']
-        }
-      }),
-
-      // Menu items indexes
-      databases.menuItemsDB.createIndex({
-        index: {
-          fields: ['type', 'categoryId']
-        }
-      }),
-      databases.menuItemsDB.createIndex({
-        index: {
-          fields: ['type', 'restaurantId']
-        }
-      }),
-
-      // Ingredients indexes
-      databases.ingredientsDB.createIndex({
-        index: {
-          fields: ['type', 'restaurantId']
-        }
-      }),
-
-      // Recipes indexes
-      databases.recipesDB.createIndex({
-        index: {
-          fields: ['type', 'restaurantId']
-        }
-      }),
-
-      // POS indexes
-      databases.posDB.createIndex({
-        index: {
-          fields: ['type', 'restaurantId', 'status']
-        }
-      }),
-      databases.posDB.createIndex({
-        index: {
-          fields: ['type', 'orderDate']
-        }
-      }),
-
-      // Inventory Transactions indexes
-      databases.inventoryTransactionsDB.createIndex({
-        index: {
-          fields: ['type', 'restaurantId', 'date']
-        }
-      }),
-
-      // KDS indexes
-      databases.kdsDB.createIndex({
-        index: {
-          fields: ['type', 'restaurantId', 'status']
-        }
-      }),
-
-      // Suppliers indexes
-      databases.suppliersDB.createIndex({
-        index: {
-          fields: ['type', 'restaurantId']
-        }
-      }),
-
-      // Recipe Versions indexes
-      databases.recipeVersionsDB.createIndex({
-        index: {
-          fields: ['type', 'recipeId', 'version']
-        }
-      }),
-
-      // Tables indexes
-      databases.tablesDB.createIndex({
-        index: {
-          fields: ['type', 'restaurantId', 'status']
-        }
-      }),
-
-      // Specials indexes
-      databases.specialsDB.createIndex({
-        index: {
-          fields: ['type', 'restaurantId', 'active']
-        }
-      }),
-
-      // Waste Records indexes
-      databases.wasteRecordsDB.createIndex({
-        index: {
-          fields: ['type', 'restaurantId', 'date']
-        }
-      }),
-
-      // Loyalty indexes
-      databases.loyaltyDB.createIndex({
-        index: {
-          fields: ['type', 'restaurantId', 'customerId']
-        }
-      })
-    ]);
-
-    // Validate database connections
-    const validationResults = await Promise.all(
-      Object.entries(databases).map(async ([name, db]) => {
-        try {
-          await db.info();
-          console.log(`Database ${name} initialized successfully`);
-          return true;
-        } catch (error) {
-          console.error(`Failed to initialize database ${name}:`, error);
-          return false;
-        }
-      })
-    );
-
-    if (!validationResults.every(Boolean)) {
-      throw new Error('One or more databases failed to initialize');
-    }
-
-    console.log('All databases initialized successfully');
+    // Use the consolidated database initialization
+    const databases = await initializeDatabases();
+    
+    // Setup sync for all databases
+    await setupSync(databases);
+    
     return databases;
-
   } catch (error) {
     console.error('Error setting up databases:', error);
     throw error;

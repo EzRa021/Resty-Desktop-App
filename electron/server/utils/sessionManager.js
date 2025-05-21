@@ -42,8 +42,10 @@ export const sessionManager = {
       _id: `session_${uuidv4()}`,
       type: 'session',
       userId: user._id,
-      userRole: user.role,
-      userDetails,
+      userDetails: {
+        ...userDetails,
+        role: user.role
+      },
       deviceInfo: {
         userAgent: deviceInfo?.userAgent,
         ip: deviceInfo?.ip,
@@ -252,5 +254,48 @@ export const sessionManager = {
     } catch (error) {
       console.error('Error cleaning up expired sessions:', error);
     }
+  }
+};
+
+export const validateUserSession = async (socket, sessionDB) => {
+  try {
+    // Check socket auth data
+    const sessionId = socket.handshake.auth?.sessionId;
+    if (!sessionId) {
+      console.error('No session ID in socket auth:', socket.handshake.auth);
+      return { valid: false, message: 'No session ID provided' };
+    }
+
+    // Validate session exists and is active
+    const session = await sessionDB.get(sessionId).catch(() => null);
+    if (!session) {
+      console.error('Session not found:', sessionId);
+      return { valid: false, message: 'Session not found' };
+    }
+
+    if (session.isRevoked) {
+      console.error('Session is revoked:', sessionId);
+      return { valid: false, message: 'Session has been revoked' };
+    }
+
+    if (new Date(session.expiresAt) < new Date()) {
+      console.error('Session expired:', sessionId);
+      return { valid: false, message: 'Session has expired' };
+    }
+
+    // Update last activity
+    session.lastActivity = new Date().toISOString();
+    await sessionDB.put(session).catch(error => {
+      console.error('Failed to update session last activity:', error);
+    });
+
+    return { 
+      valid: true, 
+      user: session.userDetails,
+      sessionId: session._id
+    };
+  } catch (error) {
+    console.error('Error validating user session:', error);
+    return { valid: false, message: 'Session validation failed' };
   }
 };

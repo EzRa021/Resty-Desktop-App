@@ -3,54 +3,108 @@ import validator from 'validator';
 import sanitizeHtml from 'sanitize-html';
 
 // Validation function for Restaurant (unchanged)
-const validateRestaurant = async (data, db) => {
+const validateRestaurant = async (data, db, isUpdate = false) => {
   const errors = [];
-
   const sanitizedData = {
     name: sanitizeHtml(data.name || ''),
-    isBranchMultiple: data.isBranchMultiple,
-    contact: {
-      phone: data.contact?.phone ? sanitizeHtml(data.contact.phone) : undefined,
-      email: data.contact?.email ? sanitizeHtml(data.contact.email) : undefined,
+    description: data.description ? sanitizeHtml(data.description) : '',
+    cuisine: data.cuisine ? sanitizeHtml(data.cuisine) : '',
+    address: data.address ? {
+      street: sanitizeHtml(data.address.street || ''),
+      city: sanitizeHtml(data.address.city || ''),
+      state: sanitizeHtml(data.address.state || ''),
+      zipCode: sanitizeHtml(data.address.zipCode || ''),
+      country: sanitizeHtml(data.address.country || ''),
+    } : undefined,
+    contactInfo: {
+      phone: data.contactInfo?.phone ? sanitizeHtml(data.contactInfo.phone) : '',
+      email: data.contactInfo?.email ? sanitizeHtml(data.contactInfo.email) : '',
+      website: data.contactInfo?.website ? sanitizeHtml(data.contactInfo.website) : '',
     },
-    logo: data.logo ? sanitizeHtml(data.logo) : undefined,
+    operatingHours: data.operatingHours || {
+      monday: { open: '09:00', close: '17:00' },
+      tuesday: { open: '09:00', close: '17:00' },
+      wednesday: { open: '09:00', close: '17:00' },
+      thursday: { open: '09:00', close: '17:00' },
+      friday: { open: '09:00', close: '17:00' },
+      saturday: { open: '09:00', close: '17:00' },
+      sunday: { open: '09:00', close: '17:00' },
+    },
+    isActive: typeof data.isActive === 'boolean' ? data.isActive : true,
   };
 
-  if (
-    !sanitizedData.name ||
-    !validator.isLength(sanitizedData.name, { min: 1, max: 100 })
-  ) {
+  // Validate name
+  if (!sanitizedData.name || !validator.isLength(sanitizedData.name, { min: 1, max: 100 })) {
     errors.push('Restaurant name is required and must be 1-100 characters');
-  } else {
-    const result = await db.find({
-      selector: { type: 'restaurant', name: sanitizedData.name },
-      limit: 1,
-    });
-    if (result.docs.length > 0) {
-      errors.push('Restaurant name already exists');
+  } else if (!isUpdate) {
+    try {
+      const result = await db.find({
+        selector: { 
+          type: 'restaurant', 
+          name: sanitizedData.name 
+        },
+        limit: 1,
+      });
+      if (result.docs.length > 0) {
+        errors.push('Restaurant name already exists');
+      }
+    } catch (error) {
+      console.error('Error checking restaurant name uniqueness:', error);
+      errors.push('Unable to validate restaurant name uniqueness');
     }
   }
 
-  if (typeof sanitizedData.isBranchMultiple !== 'boolean') {
-    errors.push('isBranchMultiple must be a boolean');
+  // Validate cuisine
+  if (!sanitizedData.cuisine || !validator.isLength(sanitizedData.cuisine, { min: 1, max: 50 })) {
+    errors.push('Cuisine is required and must be 1-50 characters');
   }
 
-  if (
-    sanitizedData.contact.phone &&
-    !validator.isMobilePhone(sanitizedData.contact.phone, 'any')
-  ) {
-    errors.push('Invalid contact phone number format');
+  // Validate address
+  if (!sanitizedData.address) {
+    errors.push('Address is required');
+  } else {
+    if (!sanitizedData.address.street) {
+      errors.push('Street address is required');
+    }
+    if (!sanitizedData.address.city) {
+      errors.push('City is required');
+    }
+    if (!sanitizedData.address.state) {
+      errors.push('State is required');
+    }
+    if (!sanitizedData.address.zipCode) {
+      errors.push('ZIP code is required');
+    }
+    if (!sanitizedData.address.country) {
+      errors.push('Country is required');
+    }
   }
 
-  if (
-    sanitizedData.contact.email &&
-    !validator.isEmail(sanitizedData.contact.email)
-  ) {
-    errors.push('Invalid contact email format');
+  // Validate contact info
+  if (sanitizedData.contactInfo.phone && !validator.isMobilePhone(sanitizedData.contactInfo.phone, 'any')) {
+    errors.push('Invalid phone number format');
+  }
+  if (sanitizedData.contactInfo.email && !validator.isEmail(sanitizedData.contactInfo.email)) {
+    errors.push('Invalid email format');
+  }
+  if (sanitizedData.contactInfo.website && !validator.isURL(sanitizedData.contactInfo.website)) {
+    errors.push('Invalid website URL format');
   }
 
-  if (sanitizedData.logo && !validator.isBase64(sanitizedData.logo)) {
-    errors.push('Invalid logo base64 string');
+  // Validate operating hours
+  const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+  for (const day of days) {
+    const hours = sanitizedData.operatingHours[day];
+    if (!hours || !hours.open || !hours.close) {
+      errors.push(`Operating hours for ${day} are required`);
+    } else {
+      if (!validator.isTime(hours.open)) {
+        errors.push(`Invalid opening time format for ${day}`);
+      }
+      if (!validator.isTime(hours.close)) {
+        errors.push(`Invalid closing time format for ${day}`);
+      }
+    }
   }
 
   return { isValid: errors.length === 0, errors, sanitizedData };
@@ -158,7 +212,7 @@ export const registerSocketEvents = (socket, options) => {
         throw new Error('Invalid restaurant ID');
       }
 
-      const validation = await validateRestaurant(updateData, db);
+      const validation = await validateRestaurant(updateData, db, true);
       if (!validation.isValid) {
         return callback({
           success: false,

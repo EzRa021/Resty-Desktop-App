@@ -1,15 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
 import bcrypt from 'bcryptjs';
 import {
-  passwordUtils,
-  sessionUtils,
-  permissionUtils,
-  securityUtils,
-  activityUtils,
   CONSTANTS
 } from '../utils/userUtils.js';
 import validateUser from '../utils/validateUser.js';
-import { roleUtils } from '../utils/roleUtils.js';
 import { loginHandler, logoutHandler } from '../utils/authHandlers.js';
 import { sessionManager } from '../utils/sessionManager.js';
 import { activityLogger } from '../utils/activityLogger.js';
@@ -273,13 +267,13 @@ export const registerSocketEvents = (socket, { db, sessionDB, logsDB, restaurant
     try {
       // Create indexes one by one to ensure they're created in order
       await db.createIndex({
-        index: { fields: ['email', 'type'] }
+          index: { fields: ['email', 'type'] }
       });
       await db.createIndex({
-        index: { fields: ['restaurantId', 'type'] }
+          index: { fields: ['restaurantId', 'type'] }
       });
       await db.createIndex({
-        index: { fields: ['role', 'type'] }
+          index: { fields: ['role', 'type'] }
       });
       await db.createIndex({
         index: { fields: ['type', 'createdAt'] }
@@ -307,23 +301,23 @@ export const registerSocketEvents = (socket, { db, sessionDB, logsDB, restaurant
       await setupIndexes();
 
       // Try to get users with index
-      try {
-        const result = await db.find({
-          selector: {
-            type: 'user',
+    try {
+      const result = await db.find({
+        selector: {
+          type: 'user',
             createdAt: { $exists: true },
             _deleted: { $exists: false }
-          },
+        },
           use_index: ['type', 'createdAt'],
           sort: [{ type: 'asc' }, { createdAt: 'desc' }]
-        });
+      });
 
-        const users = result.docs.map(({ password, ...user }) => user);
+      const users = result.docs.map(({ password, ...user }) => user);
 
-        callback({
-          success: true,
-          users,
-        });
+      callback({
+        success: true,
+        users,
+      });
       } catch (indexError) {
         // Fallback to simple query if index fails
         console.warn('Index query failed, falling back to simple query:', indexError);
@@ -350,11 +344,11 @@ export const registerSocketEvents = (socket, { db, sessionDB, logsDB, restaurant
     } catch (error) {
       console.error('Get All Users error:', error);
       if (typeof callback === 'function') {
-        callback({
-          success: false,
-          message: 'Internal server error',
+      callback({
+        success: false,
+        message: 'Internal server error',
           error: error.message
-        });
+      });
       }
     }
   });
@@ -390,16 +384,16 @@ export const registerSocketEvents = (socket, { db, sessionDB, logsDB, restaurant
       // Create update data with only the fields that are provided
       const updateData = {
         email: data.email,
-        password: data.password,
+          password: data.password,
         name: data.name,
         role: data.role,
-        phone: data.phone,
-        restaurantId: data.restaurantId,
-        branchId: data.branchId,
-        restaurantName: data.restaurantName,
-        branchName: data.branchName,
-        branchPhone: data.branchPhone,
-        branchLocation: data.branchLocation,
+          phone: data.phone,
+          restaurantId: data.restaurantId,
+          branchId: data.branchId,
+          restaurantName: data.restaurantName,
+          branchName: data.branchName,
+          branchPhone: data.branchPhone,
+          branchLocation: data.branchLocation,
       };
 
       // Remove undefined fields
